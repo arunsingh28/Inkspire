@@ -17,7 +17,6 @@ class App {
   constructor() {
     this._app = express();
     this._port = (process.env.PORT as unknown as number) || 9211;
-    // this._app.use(express.json())
     this.init();
     this.apis();
   }
