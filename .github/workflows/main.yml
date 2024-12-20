@@ -3,6 +3,9 @@ name: Inkspire Backend CI
   push:
     branches:
       - main
+    paths:
+      - "server/**"
+      - "client/**"
 
 jobs:
   build:
@@ -85,9 +88,15 @@ jobs:
 
       - name: Configure AWS CLI
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set region ${{ secrets.AWS_REGION }}
+          # Check if AWS credentials and region are configured
+          if ! aws configure list | grep -q "access_key"; then
+            echo "AWS CLI is not configured. Configuring..."
+            aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws configure set region ${{ secrets.AWS_REGION }}
+          else
+            echo "AWS CLI is already configured."
+          fi
         shell: /bin/bash -e {0}
 
       # Sync Frontend to S3 Bucket (into /app folder)
