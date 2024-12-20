@@ -26,9 +26,6 @@ jobs:
           echo "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
           actions/checkout@cbb722410c2e876e24abbe8de2cc27693e501dcb" | sha256sum
 
-      - name: Install pnpm
-        run: sudo npm install -g pnpm
-
       - name: "Use Node.js ${{ matrix.node-version }}"
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
         with:
