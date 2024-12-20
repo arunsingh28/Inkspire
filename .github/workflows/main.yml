@@ -102,7 +102,7 @@ jobs:
       # Sync Frontend to S3 Bucket (into /app folder)
       - name: Deploy Frontend to S3 (into /app folder)
         run: |
-          aws s3 sync client/dist/ s3://project-inkspire-blog/app/ --delete --acl public-read --exact-timestamps
+          aws s3 sync client/dist/ s3://project-inkspire-blog/app/
 
       # Invalidate CloudFront Cache (Optional)
       - name: Invalidate CloudFront Cache
