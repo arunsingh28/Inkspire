@@ -26,14 +26,12 @@ jobs:
           echo "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
           actions/checkout@cbb722410c2e876e24abbe8de2cc27693e501dcb" | sha256sum
 
-      - name: "go to server directory"
-        run: cd server
-
       - name: "Use Node.js ${{ matrix.node-version }}"
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
         with:
           node-version: "${{ matrix.node-version }}"
           cache: pnpm
+          cache-dependency-path: server/pnpm-lock.yaml
 
       - name: Debug workspace
         run: |
@@ -46,11 +44,12 @@ jobs:
 
       - name: Create .env file
         run: |
+          cd server
           touch .env
           echo "${{ secrets.PROD }}" > .env
 
       - name: Build project
-        run: yarn build
+        run: cd server && yarn build
 
       - name: Start project with PM2
-        run: pm2 reload server
+        run: cd server && pm2 reload server
