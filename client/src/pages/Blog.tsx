@@ -16,7 +16,6 @@ const Blog = () => {
     queryFn: () => getBlog(id?.split(".")[1] || ""),
   });
 
-  // title
   useDocumentTitle(data?.data.data.title + "| Inkspire" || "Blog | Inkspire");
 
   const createMarkup = (content: string) => {
