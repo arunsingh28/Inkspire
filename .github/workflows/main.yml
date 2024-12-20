@@ -30,10 +30,16 @@ jobs:
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
         with:
           node-version: "${{ matrix.node-version }}"
-          cache: yarn
+          cache: pnpm
+
+      - name: Debug workspace
+        run: |
+          ls -la
+          cd server
+          ls -la
 
       - name: Install dependencies
-        run: cd server && yarn install
+        run: cd server && pnpm install --frozen-lockfile
 
       - name: Create .env file
         run: |
@@ -41,8 +47,8 @@ jobs:
           touch .env
           echo "${{ secrets.PROD }}" > .env
 
-      - name: Build project
-        run: cd server && yarn build
+      # - name: Build project
+      #   run: cd server && yarn build
 
       - name: Start project with PM2
         run: cd server && pm2 reload server
