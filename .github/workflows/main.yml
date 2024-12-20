@@ -3,8 +3,6 @@ name: Inkspire Backend CI
   push:
     branches:
       - main
-    paths:
-      - "server/**"
 
 jobs:
   build:
@@ -26,13 +24,7 @@ jobs:
           echo "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
           actions/checkout@cbb722410c2e876e24abbe8de2cc27693e501dcb" | sha256sum
 
-      # # - name: Debug workspace
-      #   run: |
-      #     ls -la
-      #     cd server
-      #     ls -la
-
-      - name: "Use Node.js ${{ matrix.node-version }}"
+      - name: "Use Node.js ${{ matrix.node-version }} for backend"
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
         with:
           node-version: "${{ matrix.node-version }}"
@@ -40,16 +32,46 @@ jobs:
           cache-dependency-path: server/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: cd server && pnpm install --frozen-lockfile
+        working-directory: server
+        run: pnpm install --frozen-lockfile
 
       - name: Create .env file
+        working-directory: server
         run: |
-          cd server
           touch .env
           echo "${{ secrets.PROD }}" > .env
 
       - name: Build project
-        run: cd server && pnpm build
+        working-directory: server
+        run: pnpm build
 
       - name: Start project with PM2
-        run: cd server && pm2 reload server
+        working-directory: server
+        run: pm2 reload server
+
+      # frontend
+      - name: "Use Node.js ${{ matrix.node-version }} for frontend"
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
+        with:
+          node-version: "${{ matrix.node-version }}"
+          cache: "pnpm"
+          cache-dependency-path: client/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: client
+        run: pnpm install --frozen-lockfile
+
+      - name: Build project
+        working-directory: client
+        run: pnpm build
+
+      - name: Deploy Frontend to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl public-read --delete
+        env:
+          AWS_S3_BUCKET: project-inkspire-blog
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SOURCE_DIR: frontend/dist

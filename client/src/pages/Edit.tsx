@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import React from "react";
 import { Input, Form, Upload, Button, message, Flex , Skeleton} from "antd";
 import type { UploadProps } from "antd";
@@ -70,7 +71,7 @@ const EditBlog = () => {
       setValue("title", data?.data?.data?.title ?? "");
       setValue("post_image", data?.data?.data?.post_image ?? "");
     }
-  }, [data]);
+  }, [data, setValue]);
 
   // Form submission handler
   const onSubmit = (data: BlogFormValues) => {
@@ -85,40 +86,47 @@ const EditBlog = () => {
     });
   };
 
-  // Upload props for thumbnail
-  const props: UploadProps = {
-    name: "file",
-    customRequest: async ({ file }) => {
-      try {
-        const File = file as File;
-        const signUrl = await getSignUrl({
-          filename: File.name,
-          filetype: File.type,
-        });
-        const { signedUrl } = signUrl.data.data;
+   const props: UploadProps = {
+      name: "file",
+      customRequest: async ({ file, onSuccess, onError }) => {
         try {
+          const File = file as File;
+  
+          // Step 1: Get the signed URL from your server
+          const signUrl = await getSignUrl({
+            filename: File.name,
+            filetype: File.type,
+          });
+  
+          const { signedUrl } = signUrl.data.data;
+  
+          // Step 2: Upload the file to S3 using the signed URL
           const uploadResponse = await fetch(signedUrl, {
             method: "PUT",
             headers: {
-              "Content-Type": (file as File).type || "",
+              "Content-Type": (file as File).type,
             },
             body: file,
           });
+          onSuccess && onSuccess("ok");
           if (uploadResponse.ok) {
-            console.log("image", uploadResponse);
-            console.log("File uploaded successfully");
+            message.success("File uploaded successfully");
+  
+            // Get the image URL (without the query string)
+            const imageUrl = signedUrl.split("?")[0];
+  
+            setValue("post_image", imageUrl);
           } else {
             throw new Error("File upload failed");
           }
         } catch (error) {
-          console.log(error);
+          console.error(error);
+          onError && onError(error as Error);
           message.error("File upload failed");
         }
-      } catch (error) {
-        console.log(error);
-      }
-    },
-  };
+      },
+    };
+
 
   return (
     <Flex gap="middle" className="mt-5 max-w-[800px] mx-auto" vertical>

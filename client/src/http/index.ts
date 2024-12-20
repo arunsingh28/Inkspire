@@ -2,7 +2,7 @@ import storage from "@/utils/storage";
 import axios, { AxiosError } from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:9211",
+  baseURL: "http://13.201.32.72",
   headers: {
     "Content-Type": "application/json",
   },

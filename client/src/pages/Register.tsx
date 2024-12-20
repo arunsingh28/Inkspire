@@ -6,7 +6,6 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 
 import { registerUser } from "@/http/auth.api";
-import { appRoutes } from "@/utils/paths";
 import useDocumentTitle from "@/hooks/useMeta";
 
 
@@ -51,7 +50,7 @@ export default function RegisterPage() {
     mutationFn: registerUser,
     onSuccess: () => {
       message.success("Registration successful!");
-      navigate(appRoutes.auth.INDEX);
+      navigate('/auth/login');
       reset();
     },
     onError: (error) => {

@@ -69,11 +69,11 @@ AuthStateContext.displayName = "AuthStateContext";
 AuthDispatchContext.displayName = "AuthDispatchContext";
 
 const initializeAuthState = (): AuthState => {
-  const storedToken = storage.get<string>(TOKENS_KEY);
+  const storedToken = storage.get<Token>(TOKENS_KEY);
   const storedUser = storage.get<User>(USER_KEY);
 
   return {
-    token: storedToken || "",  // Use an empty string if token doesn't exist or is invalid
+    token: storedToken || INITIAL_TOKEN,  // Use initial token object if no valid token is found
     user: storedUser || INITIAL_USER,  // Use initial user object if no valid user is found
   };
 };
