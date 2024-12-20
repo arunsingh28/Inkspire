@@ -49,7 +49,7 @@ jobs:
           echo "${{ secrets.PROD }}" > .env
 
       - name: Build project
-        run: cd server && yarn build
+        run: cd server && pnpm build
 
       - name: Start project with PM2
         run: cd server && pm2 reload server
