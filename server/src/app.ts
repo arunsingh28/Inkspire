@@ -43,6 +43,8 @@ class App {
     // Error handler middleware
     this._app.use(errorHandler);
 
+    // as
+
     this._app.listen(this._port, () => {
       console.log(`Server running on port ${this._port}`);
     });
