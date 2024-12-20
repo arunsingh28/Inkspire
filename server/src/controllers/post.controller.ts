@@ -54,6 +54,7 @@ export class PostController {
             createdAt: 1,
             author: {
               email: 1,
+              name: 1,
               _id: 1,
             },
           },
@@ -77,32 +78,35 @@ export class PostController {
         blogs: blogs[0]?.blogs || [],
         total: blogs[0]?.total[0]?.total || 0,
       };
-      console.log(result);
 
       successResponse(res, result);
     } catch (error) {
       next(error);
     }
   }
-  async delete(req: Request, res: Response, next: NextFunction) {
+  async delete(req: CustomedRequest, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      await BlogModel.findByIdAndDelete(id);
+      await BlogModel.findByIdAndDelete({ _id: id, author: req.user.id });
       successResponse(res, { message: "Blog deleted successfully" });
     } catch (error) {
       next(error);
     }
   }
-  async update(req: Request, res: Response, next: NextFunction) {
+  async update(req: CustomedRequest, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const { title, content } = req.body as CreateBlogInput;
-      await BlogModel.findByIdAndUpdate(id, { title, content });
+      await BlogModel.findOneAndUpdate(
+        { _id: id, author: req.user.id },
+        { title, content }
+      );
       successResponse(res, { message: "Blog updated successfully" });
     } catch (error) {
       next(error);
     }
   }
+
   async get(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
@@ -132,6 +136,7 @@ export class PostController {
             createdAt: 1,
             author: {
               email: 1,
+              name: 1,
               _id: 1,
             },
           },

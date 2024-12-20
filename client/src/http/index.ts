@@ -2,7 +2,7 @@ import storage from "@/utils/storage";
 import axios, { AxiosError } from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://api.docbots.ai",
+  baseURL: "http://localhost:9211",
   headers: {
     "Content-Type": "application/json",
   },

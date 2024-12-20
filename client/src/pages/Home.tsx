@@ -122,17 +122,112 @@ const Home: React.FC = () => {
           ))}
         {
           // Display a message if no blogs are available
-          blogs.length === 0 && (
+          !isLoading && blogs.length === 0 && (
             <h1 className="text-3xl text-gray-600 font-roboto-regular">
               No Blogs Available
             </h1>
           )
         }
         {blogs?.map((blog) => (
-          <Card
+          <>
+            {
+              blog.author?._id === user?._id ? <Card
+              loading={isLoading}
+              actions={
+                Object.keys(user).length && user._id === blog.author?._id
+                  ? [
+                      <Link
+                        to={`/blog/${blog.title.split(" ").join("-")}.${
+                          blog._id
+                        }`}
+                      >
+                        {" "}
+                        <View size={20} className="mx-auto" />
+                      </Link>,
+                      <Trash2
+                        size={20}
+                        className="mx-auto"
+                        onClick={() => {
+                          setId(blog?._id || "");
+                          setDeleteBlog(true);
+                        }}
+                      />,
+                      <Link
+                        to={`/edit-blog/${blog.title.split(" ").join("-")}.${
+                          blog._id
+                        }`}
+                      >
+                        <Pen size={20} className="mx-auto" />
+                      </Link>,
+                    ]
+                  : []
+              }
+              style={{ maxWidth: 420, margin: "0 10px 20px" }}
+              hoverable={!Object.keys(user).length ? true : false}
+              key={blog._id}
+              onClick={
+                !Object.keys(user).length
+                  ? () => {
+                      navigate(`/blog/${blog.title}.${blog._id}`);
+                    }
+                  : undefined
+              }
+              cover={
+                <img
+                  className="h-[250px] w-full object-cover"
+                  src={blog.post_image || "https://via.placeholder.com/300"}
+                  alt="placeholder"
+                />
+              }
+            >
+              <Card.Meta
+                avatar={
+                  <Avatar
+                    src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${
+                      Math.random() * 100
+                    }`}
+                  />
+                }
+                title={
+                  <h2 className="text-xl text-gray-600 capitalize font-roboto-regular">
+                    {blog.title}
+                  </h2>
+                }
+                description={
+                  <p
+                    className="h-[70px] overflow-hidden"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        blog.content.length > 250
+                          ? `${blog.content.trim().slice(0, 250)}...`
+                          : blog.content.trim(),
+                    }}
+                  />
+                }
+              />
+              <div className="flex items-center justify-between mt-3">
+              <Card.Meta
+                title={
+                  <p className="text-gray-500 text-xs font-roboto-regular">
+                    {new Date(blog.createdAt ?? "").toDateString()}
+                  </p>
+                }
+              />
+              <Card.Meta
+                title={
+                 <p className="text-gray-500 text-xs font-roboto-regular"> By - {" "}
+                  <span className="italic">
+                    {blog.author?.name ?? "Anonymous"}
+                  </span>
+                  </p>
+                }
+              />
+              </div>
+            </Card> : <Link to={`/blog/${blog.title.split(" ").join("-")}.${blog._id}`}>
+            <Card
             loading={isLoading}
             actions={
-              Object.keys(user).length
+              Object.keys(user).length && user._id === blog.author?._id
                 ? [
                     <Link
                       to={`/blog/${blog.title.split(" ").join("-")}.${
@@ -203,7 +298,28 @@ const Home: React.FC = () => {
                 />
               }
             />
+            <div className="flex items-center justify-between mt-3">
+            <Card.Meta
+              title={
+                <p className="text-gray-500 text-xs font-roboto-regular">
+                  {new Date(blog.createdAt ?? "").toDateString()}
+                </p>
+              }
+            />
+            <Card.Meta
+              title={
+               <p className="text-gray-500 text-xs font-roboto-regular"> By - {" "}
+                <span className="italic">
+                  {blog.author?.name ?? "Anonymous"}
+                </span>
+                </p>
+              }
+            />
+            </div>
           </Card>
+            </Link>
+            }
+          </>
         ))}
       </Flex>
     </>
