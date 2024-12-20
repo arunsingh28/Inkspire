@@ -33,15 +33,16 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: cd server && pnpm install --frozen-lockfile
 
-      - name: Install dependencies
-        run: pnpm install
       - name: Create .env file
         run: |
+          cd server
           touch .env
           echo "${{ secrets.PROD }}" > .env
+
       - name: Build project
-        run: pnpm build
+        run: cd server && pnpm build
+
       - name: Start project with PM2
-        run: pm2 reload server
+        run: cd server && pm2 reload server
