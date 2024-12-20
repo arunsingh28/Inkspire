@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import { useAuthState } from "@/provider/auth.contex";
 import useDocumentTitle from "@/hooks/useMeta";
+import BlogCardSkeleton from "@/components/BlogSkeleton";
 
 const Home: React.FC = () => {
   const [page, setPage] = React.useState<number>(1);
@@ -112,9 +113,13 @@ const Home: React.FC = () => {
         justify="start"
         className="my-10"
       >
+        {isLoading &&
+          Array.from({ length: 2 }).map((_, index) => (
+            <BlogCardSkeleton key={index} />
+          ))}
         {
           // Display a message if no blogs are available
-          !isLoading && blogs.length === 0 && (
+          blogs.length === 0 && (
             <h1 className="text-3xl text-gray-600 font-roboto-regular">
               No Blogs Available
             </h1>
