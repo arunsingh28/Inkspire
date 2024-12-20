@@ -3,9 +3,9 @@ name: Inkspire Backend CI
   push:
     branches:
       - main
-    # paths:
-    #   - "server/**"
-    #   - "client/**"
+    paths:
+      - "server/**"
+      - "client/**"
 
 jobs:
   build:

@@ -53,7 +53,7 @@ const Home: React.FC = () => {
     }
   }, [page, limit]);
 
-  const { mutate } = useMutation({
+  const { mutate, isLoading: deleteLoading } = useMutation({
     mutationKey: ["deleteBlog"],
     mutationFn: () => deleteBlogFn(id),
     onSuccess: (data) => {
@@ -102,6 +102,9 @@ const Home: React.FC = () => {
         onOk={() => mutate()}
         okType="danger"
         onCancel={handleCancel}
+        okButtonProps={{
+          loading: deleteLoading,
+        }}
       >
         <p>Are you sure you want to delete this blog?</p>
       </Modal>
